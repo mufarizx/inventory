@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Inventory ERP - Trima Laksana</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>Trima Laksana ERP</h2>
+            </div>
+            <div class="nav-menu">
+                <a href="#dashboard" class="nav-link active">Dashboard</a>
+                <a href="#products" class="nav-link">Produk</a>
+                <a href="#inventory" class="nav-link">Stok</a>
+                <a href="#reports" class="nav-link">Laporan</a>
+                <a href="#settings" class="nav-link">Pengaturan</a>
+            </div>
+            <div class="nav-user">
+                <i class="fas fa-user"></i>
+                <span>Admin</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section active">
+            <div class="section-header">
+                <h1>Dashboard Inventory</h1>
+                <p>Overview sistem manajemen inventory Anda</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="total-products">0</h3>
+                        <p>Total Produk</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-warehouse"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="total-stock">0</h3>
+                        <p>Total Stok</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="low-stock">0</h3>
+                        <p>Stok Rendah</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="total-value">Rp 0</h3>
+                        <p>Nilai Total</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-section">
+                <div class="chart-card">
+                    <h3>Stok Terbaru</h3>
+                    <div class="recent-stock" id="recent-stock">
+                        <p>Belum ada data stok</p>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h3>Aktivitas Terbaru</h3>
+                    <div class="recent-activity" id="recent-activity">
+                        <p>Belum ada aktivitas</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section id="products" class="section">
+            <div class="section-header">
+                <h1>Manajemen Produk</h1>
+                <button class="btn btn-primary" onclick="showAddProductModal()">
+                    <i class="fas fa-plus"></i> Tambah Produk
+                </button>
+            </div>
+            
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Kode</th>
+                            <th>Nama Produk</th>
+                            <th>Kategori</th>
+                            <th>Harga</th>
+                            <th>Stok</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-table">
+                        <tr>
+                            <td colspan="7" class="no-data">Belum ada produk</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Inventory Section -->
+        <section id="inventory" class="section">
+            <div class="section-header">
+                <h1>Manajemen Stok</h1>
+                <button class="btn btn-secondary" onclick="showStockUpdateModal()">
+                    <i class="fas fa-edit"></i> Update Stok
+                </button>
+            </div>
+            
+            <div class="inventory-filters">
+                <select id="category-filter">
+                    <option value="">Semua Kategori</option>
+                </select>
+                <select id="status-filter">
+                    <option value="">Semua Status</option>
+                    <option value="tersedia">Tersedia</option>
+                    <option value="stok-rendah">Stok Rendah</option>
+                    <option value="habis">Habis</option>
+                </select>
+                <input type="text" id="search-input" placeholder="Cari produk...">
+            </div>
+            
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Produk</th>
+                            <th>Kategori</th>
+                            <th>Stok Saat Ini</th>
+                            <th>Min. Stok</th>
+                            <th>Status</th>
+                            <th>Terakhir Update</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-table">
+                        <tr>
+                            <td colspan="7" class="no-data">Belum ada data inventory</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Reports Section -->
+        <section id="reports" class="section">
+            <div class="section-header">
+                <h1>Laporan & Analitik</h1>
+                <button class="btn btn-success" onclick="generateReport()">
+                    <i class="fas fa-download"></i> Export Laporan
+                </button>
+            </div>
+            
+            <div class="reports-grid">
+                <div class="report-card">
+                    <h3>Laporan Stok</h3>
+                    <p>Ringkasan kondisi stok saat ini</p>
+                    <button class="btn btn-outline">Lihat Detail</button>
+                </div>
+                
+                <div class="report-card">
+                    <h3>Pergerakan Barang</h3>
+                    <p>Histori keluar masuk barang</p>
+                    <button class="btn btn-outline">Lihat Detail</button>
+                </div>
+                
+                <div class="report-card">
+                    <h3>Nilai Inventory</h3>
+                    <p>Kalkulasi nilai total inventory</p>
+                    <button class="btn btn-outline">Lihat Detail</button>
+                </div>
+                
+                <div class="report-card">
+                    <h3>Prediksi Kebutuhan</h3>
+                    <p>Analisis kebutuhan stok masa depan</p>
+                    <button class="btn btn-outline">Lihat Detail</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="section">
+            <div class="section-header">
+                <h1>Pengaturan Sistem</h1>
+            </div>
+            
+            <div class="settings-grid">
+                <div class="setting-card">
+                    <h3>Pengaturan Umum</h3>
+                    <div class="setting-item">
+                        <label>Nama Perusahaan</label>
+                        <input type="text" value="Trima Laksana" readonly>
+                    </div>
+                    <div class="setting-item">
+                        <label>Mata Uang</label>
+                        <select>
+                            <option>IDR (Rupiah)</option>
+                            <option>USD (Dollar)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="setting-card">
+                    <h3>Notifikasi</h3>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" checked> Notifikasi stok rendah
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" checked> Email laporan harian
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add Product Modal -->
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Tambah Produk Baru</h3>
+                <span class="close" onclick="closeModal('addProductModal')">&times;</span>
+            </div>
+            <form id="addProductForm">
+                <div class="form-group">
+                    <label>Kode Produk</label>
+                    <input type="text" id="product-code" required>
+                </div>
+                <div class="form-group">
+                    <label>Nama Produk</label>
+                    <input type="text" id="product-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <select id="product-category" required>
+                        <option value="">Pilih Kategori</option>
+                        <option value="elektronik">Elektronik</option>
+                        <option value="fashion">Fashion</option>
+                        <option value="makanan">Makanan</option>
+                        <option value="kesehatan">Kesehatan</option>
+                        <option value="lainnya">Lainnya</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Harga</label>
+                    <input type="number" id="product-price" required>
+                </div>
+                <div class="form-group">
+                    <label>Stok Awal</label>
+                    <input type="number" id="product-stock" required>
+                </div>
+                <div class="form-group">
+                    <label>Minimum Stok</label>
+                    <input type="number" id="product-min-stock" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addProductModal')">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Stock Update Modal -->
+    <div id="stockUpdateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Update Stok</h3>
+                <span class="close" onclick="closeModal('stockUpdateModal')">&times;</span>
+            </div>
+            <form id="stockUpdateForm">
+                <div class="form-group">
+                    <label>Pilih Produk</label>
+                    <select id="stock-product" required>
+                        <option value="">Pilih Produk</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Jenis Update</label>
+                    <select id="stock-type" required>
+                        <option value="">Pilih Jenis</option>
+                        <option value="masuk">Barang Masuk</option>
+                        <option value="keluar">Barang Keluar</option>
+                        <option value="koreksi">Koreksi Stok</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Jumlah</label>
+                    <input type="number" id="stock-quantity" required>
+                </div>
+                <div class="form-group">
+                    <label>Keterangan</label>
+                    <textarea id="stock-notes" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('stockUpdateModal')">Batal</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
